@@ -7,7 +7,7 @@ export default class Shop extends Component {
     super();
     this.state = {
       cart: [],
-      
+         
     };
     this.findProductIndex = this.findProductIndex.bind(this);
     this.updateProductUnits = this.updateProductUnits.bind(this);
@@ -38,7 +38,23 @@ export default class Shop extends Component {
   handleClick(listOfDogs) {
     const { cart } = this.state;
     const existingProductIndex = this.findProductIndex(cart, listOfDogs.id);
+      
+    // const index = listOfDogs.id - 1
+
+    // const copyCounter = counter;
+
+    // const limit = listOfDogs.limit
     
+    // copyCounter[index] = limit === 1 ? true : false;
+    // console.log('copyCounter', copyCounter);
+
+    // functClicks({
+    //   squares: square,
+    //   selected: !selected,
+    // });
+
+
+
     this.setState({
       cart:
         existingProductIndex >= 0
@@ -46,6 +62,7 @@ export default class Shop extends Component {
           : [...cart, listOfDogs],
        
     });
+   
   }
 
   resertCart() {
@@ -56,18 +73,19 @@ export default class Shop extends Component {
 
   render() {
     const { cart } = this.state;
+   
     let cont = 0;
-    console.log('cart', cart);
+    
     return (
       <div>
         <ul>
           {cart.map((iten) => {
             cont = cont + iten.price * iten.units;
-            console.log(cont);
+           
             return (
-              <li>
+              <ol>
                 {iten.name} ←→ {iten.units} R${iten.price * iten.units}
-              </li>
+              </ol>
             );
           })}
         </ul>
