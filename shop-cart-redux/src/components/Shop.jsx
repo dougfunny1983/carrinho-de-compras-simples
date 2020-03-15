@@ -1,97 +1,92 @@
 import React, { Component } from 'react';
 import Products from './Products';
 import { listOfDogs } from '../data/data';
+import { connect } from 'react-redux';
+import { purchase, cleanCart } from '../actions/action';
 
-export default class Shop extends Component {
-  constructor() {
-    super();
-    this.state = {
-      cart: [],
-         
-    };
-    this.findProductIndex = this.findProductIndex.bind(this);
-    this.updateProductUnits = this.updateProductUnits.bind(this);
+class Shop extends Component {
+  constructor(props) {
+    super(props);
+    // this.findProductIndex = this.findProductIndex.bind(this);
+    // this.updateProductUnits = this.updateProductUnits.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.resertCart = this.resertCart.bind(this);
   }
 
-  findProductIndex(cart, productID) {
-    return cart.findIndex((p) => p.id === productID);
-  }
+  // findProductIndex(cart, productID) {
+  //   return cart.findIndex((p) => p.id === productID);
+  // }
 
-  updateProductUnits(cart, product) {
-    const productIndex = this.findProductIndex(cart, product.id);
+  // updateProductUnits(cart, product) {
+  //   const productIndex = this.findProductIndex(cart, product.id);
 
-    const updatedProducts = [...cart];
-    const existingProduct = updatedProducts[productIndex];
+  //   const updatedProducts = [...cart];
+  //   const existingProduct = updatedProducts[productIndex];
 
-    const updatedUnitsProduct = {
-      ...existingProduct,
-      units: existingProduct.units + product.units,
-    };
+  //   const updatedUnitsProduct = {
+  //     ...existingProduct,
+  //     units: existingProduct.units + product.units,
+  //   };
 
-    updatedProducts[productIndex] = updatedUnitsProduct;
+  //   updatedProducts[productIndex] = updatedUnitsProduct;
 
-    return updatedProducts;
-  }
+  //   return updatedProducts;
+  // }
 
   handleClick(listOfDogs) {
-    const { cart } = this.state;
-    const existingProductIndex = this.findProductIndex(cart, listOfDogs.id);
-      
-    // const index = listOfDogs.id - 1
-
-    // const copyCounter = counter;
-
-    // const limit = listOfDogs.limit
     
-    // copyCounter[index] = limit === 1 ? true : false;
-    // console.log('copyCounter', copyCounter);
+    const { counter, shippingToCart } = this.props;
 
-    // functClicks({
-    //   squares: square,
-    //   selected: !selected,
-    // });
+    //const existingProductIndex = this.findProductIndex(cart, listOfDogs.id);
 
+    const index = listOfDogs.id - 1;
 
+    const copyCounter = counter;
 
-    this.setState({
-      cart:
-        existingProductIndex >= 0
-          ? this.updateProductUnits(cart, listOfDogs)
-          : [...cart, listOfDogs],
-       
+    copyCounter[index] = copyCounter[index] + 1;
+
+    //let copyCartBuy = existingProductIndex >= 0 ? this.updateProductUnits(cart, listOfDogs) : null
+    // [...cart, listOfDogs]
+    //console.log('o que é isso? ', copyCartBuy);
+
+    shippingToCart({
+      cart:  listOfDogs,
+      counter: copyCounter,
     });
-   
   }
 
   resertCart() {
-    this.setState({
+    const { cleaningTheCart  } = this.props;
+    cleaningTheCart({
       cart: [],
+      counter: Array(5).fill(null),
     });
   }
 
   render() {
-    const { cart } = this.state;
-   
-    let cont = 0;
+    const { cart, counter } = this.props;
     
+    let cont = 0;
     return (
       <div>
-        <ul>
-          {cart.map((iten) => {
-            cont = cont + iten.price * iten.units;
-           
+        <ol className="mw5 center bg-white br3 pa3 pa4-ns mv3 ba b--black-10">
+          {cart.map((iten, index) => {
+            cont = cont + iten.cart.price * iten.cart.units;
             return (
-              <ol>
-                {iten.name} ←→ {iten.units} R${iten.price * iten.units}
-              </ol>
+              <li key={`${iten}${index}`} className="f5 fw4 gray mt0">
+                {iten.cart.name} ←→ {iten.cart.units} R${iten.cart.price * iten.cart.units}
+              </li>
             );
           })}
-        </ul>
+        </ol >
         <main className="pa3 pa5-ns flex flex-wrap">
           {listOfDogs.map((dogs) => (
-            <Products key={dogs.id} {...dogs} onClick={this.handleClick} />
+            <Products
+              key={dogs.id}
+              {...dogs}
+              disabled={counter[dogs.id - 1] >= dogs.limit ? true : false}
+              onClick={this.handleClick}
+            />
           ))}
           <h2>total R$ {cont ? cont : 0}.00</h2>
           <button
@@ -104,3 +99,15 @@ export default class Shop extends Component {
     );
   }
 }
+
+const mapStateToProps = ({ reducer: { cart, counter } }) => ({
+  cart,
+  counter,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  shippingToCart: (value) => dispatch(purchase(value)),
+  cleaningTheCart: () => dispatch(cleanCart()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Shop);
