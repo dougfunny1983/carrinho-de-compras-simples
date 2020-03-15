@@ -7,6 +7,7 @@ export default class Shop extends Component {
     super();
     this.state = {
       cart: [],
+      
     };
     this.findProductIndex = this.findProductIndex.bind(this);
     this.updateProductUnits = this.updateProductUnits.bind(this);
@@ -37,12 +38,13 @@ export default class Shop extends Component {
   handleClick(listOfDogs) {
     const { cart } = this.state;
     const existingProductIndex = this.findProductIndex(cart, listOfDogs.id);
-
+    
     this.setState({
       cart:
         existingProductIndex >= 0
           ? this.updateProductUnits(cart, listOfDogs)
           : [...cart, listOfDogs],
+       
     });
   }
 
@@ -55,6 +57,7 @@ export default class Shop extends Component {
   render() {
     const { cart } = this.state;
     let cont = 0;
+    console.log('cart', cart);
     return (
       <div>
         <ul>
